@@ -117,10 +117,22 @@ class ExternalEventHandler(AsyncEventHandler):
                     audio=audio_bytes,
                     timestamp=time.monotonic_ns(),
                 )
-                await self.write_event(chunk.event())
-        except Exception:
-            _LOGGER.exception("Unexpected error in run_mic")
+                try:
+                   await self.write_event(chunk.event())
+                except: 
+                    pass
+                    break
+        except:
+            pass
+            _LOGGER.exception("Unexpected error in run_mic")	
+        try:
+           proc.terminate()
+        except:
+           pass
 
+
+    async def disconnect(self) -> None:
+        _LOGGER.debug("Client disconnected: %s", self.client_id)
 
 # -----------------------------------------------------------------------------
 
